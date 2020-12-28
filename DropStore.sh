@@ -14,6 +14,7 @@
 HORIZONTAL_LINE="========================================================================="
 DUPLICITY_GIT_REPO="https://github.com/RedaMaher/DropStore_duplicity"
 DROPSTORE_DUPLICITY_BRANCH="DropStore_support"
+DROPSTORE_DUPLICITY_TMP_DIR="/tmp/DropStore_duplicity"
 SFTP_GROUP_NAME="dropstore-edge-users"
 DROPSTORE_ROOT_DIR="/opt/dropstore"
 
@@ -65,14 +66,15 @@ echo -e "\n#################################################"
 echo -e "\n# Install the DropStore version of Duplicity"
 echo -e "\n#################################################"
 pushd /tmp > /dev/null
-rm -rf /tmp/duplicity-gitlab
-git clone ${DUPLICITY_GIT_REPO}
+rm -rf ${DROPSTORE_DUPLICITY_TMP_DIR}
+mkdir -p ${DROPSTORE_DUPLICITY_TMP_DIR} && cd ${DROPSTORE_DUPLICITY_TMP_DIR}
+git clone ${DUPLICITY_GIT_REPO} ${DROPSTORE_DUPLICITY_TMP_DIR}
 if [ $? != 0 ]; then
     echo "ERROR: Colud not clone the duplicity source code .. Abort!"
     exit 1
 fi
 
-cd duplicity-gitlab
+git checkout ${DROPSTORE_DUPLICITY_BRANCH}
 python3 setup.py build
 if [ $? != 0 ]; then
     echo "ERROR: Failed to build Duplicity .. Abort!"
@@ -92,7 +94,7 @@ if [ $? != 0 ]; then
     exit 1
 fi
 
-rm -rf /tmp/duplicity-gitlab
+rm -rf ${DROPSTORE_DUPLICITY_TMP_DIR}
 
 popd > /dev/null
 
